@@ -17,7 +17,7 @@ export function generateComments(count) {
     }
     comments.push({
       id: commentIds[i],
-      avatar: `img/avatar-${getRandomInt(1, 25)}.svg`,
+      avatar: `img/avatar-${getRandomInt(1, 6)}.svg`,
       message: message.trim(),
       name: NAMES[getRandomInt(0, NAMES.length - 1)]
     });

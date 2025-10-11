@@ -1,3 +1,5 @@
+import { showBigPicture } from './big-picture.js';
+
 /**
  * Контейнер для отображения миниатюр
  * @type {HTMLElement}
@@ -24,6 +26,12 @@ function createThumbnail(photo) {
 
   pictureElement.querySelector('.picture__likes').textContent = photo.likes;
   pictureElement.querySelector('.picture__comments').textContent = photo.comments.length;
+
+  // Добавляем обработчик клика для открытия полноразмерного изображения
+  pictureElement.addEventListener('click', (evt) => {
+    evt.preventDefault();
+    showBigPicture(photo);
+  });
 
   return pictureElement;
 }
