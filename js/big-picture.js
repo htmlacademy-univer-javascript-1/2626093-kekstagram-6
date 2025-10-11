@@ -9,6 +9,14 @@ const bodyElement = document.querySelector('body');
 const cancelButton = bigPictureElement.querySelector('.big-picture__cancel');
 const commentCountElement = bigPictureElement.querySelector('.social__comment-count');
 const commentsLoaderElement = bigPictureElement.querySelector('.comments-loader');
+const commentsContainer = bigPictureElement.querySelector('.social__comments');
+
+// Количество комментариев, отображаемых за один раз
+const COMMENTS_PER_PORTION = 5;
+
+// Храним текущие данные для работы с комментариями
+let currentComments = [];
+let displayedComments = 0;
 
 /**
  * Создает DOM-элемент комментария
@@ -37,21 +45,36 @@ function createCommentElement(comment) {
 }
 
 /**
- * Отрисовывает комментарии к фотографии
- * @param {Array} comments - массив комментариев
+ * Отрисовывает порцию комментариев к фотографии
+ * @param {boolean} initial - флаг начальной загрузки (если true, контейнер очищается)
  */
-function renderComments(comments) {
-  const commentsContainer = bigPictureElement.querySelector('.social__comments');
-  commentsContainer.innerHTML = '';
+function renderCommentsPortion(initial = false) {
+  if (initial) {
+    commentsContainer.innerHTML = '';
+    displayedComments = 0;
+  }
 
   const fragment = document.createDocumentFragment();
+  const commentsToShow = Math.min(displayedComments + COMMENTS_PER_PORTION, currentComments.length);
 
-  comments.forEach((comment) => {
-    const commentElement = createCommentElement(comment);
+  // Отображаем следующую порцию комментариев
+  for (let i = displayedComments; i < commentsToShow; i++) {
+    const commentElement = createCommentElement(currentComments[i]);
     fragment.appendChild(commentElement);
-  });
+  }
 
   commentsContainer.appendChild(fragment);
+  displayedComments = commentsToShow;
+
+  // Обновляем счетчик комментариев
+  commentCountElement.textContent = `${displayedComments} из ${currentComments.length} комментариев`;
+
+  // Скрываем кнопку загрузки, если все комментарии загружены
+  if (displayedComments >= currentComments.length) {
+    commentsLoaderElement.classList.add('hidden');
+  } else {
+    commentsLoaderElement.classList.remove('hidden');
+  }
 }
 
 /**
@@ -81,6 +104,13 @@ function onLikeClick(photo) {
 }
 
 /**
+ * Обработчик клика по кнопке "Загрузить еще"
+ */
+function onCommentsLoaderClick() {
+  renderCommentsPortion();
+}
+
+/**
  * Показывает полноразмерное изображение
  * @param {Object} photo - объект с данными фотографии
  */
@@ -90,11 +120,17 @@ function showBigPicture(photo) {
   bigPictureElement.querySelector('.comments-count').textContent = photo.comments.length;
   bigPictureElement.querySelector('.social__caption').textContent = photo.description;
 
-  renderComments(photo.comments);
+  // Сохраняем комментарии для пошаговой загрузки
+  currentComments = photo.comments.slice();
 
-  // Скрываем блоки счётчика комментариев и загрузки новых комментариев
-  commentCountElement.classList.add('hidden');
-  commentsLoaderElement.classList.add('hidden');
+  // Показываем первую порцию комментариев
+  renderCommentsPortion(true);
+
+  // Показываем блоки счётчика комментариев и загрузки новых комментариев
+  commentCountElement.classList.remove('hidden');
+
+  // Кнопка загрузки может быть скрыта, если комментариев меньше, чем COMMENTS_PER_PORTION
+  // Это обрабатывается в renderCommentsPortion
 
   // Настройка функциональности лайков
   const likesContainer = bigPictureElement.querySelector('.social__likes');
@@ -112,6 +148,9 @@ function showBigPicture(photo) {
     evt.stopPropagation();
     onLikeClick(photo);
   });
+
+  // Добавляем обработчик клика на кнопку "Загрузить еще"
+  commentsLoaderElement.addEventListener('click', onCommentsLoaderClick);
 
   // Отображаем окно с полноразмерным изображением
   bigPictureElement.classList.remove('hidden');
@@ -132,6 +171,11 @@ function closeBigPicture() {
   // Удаляем обработчики событий
   document.removeEventListener('keydown', onEscKeyDown);
   cancelButton.removeEventListener('click', closeBigPicture);
+  commentsLoaderElement.removeEventListener('click', onCommentsLoaderClick);
+
+  // Сбрасываем данные о комментариях
+  currentComments = [];
+  displayedComments = 0;
 }
 
 /**
