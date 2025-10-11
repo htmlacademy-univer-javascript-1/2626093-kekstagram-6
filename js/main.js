@@ -1,11 +1,5 @@
-import { generateComments } from './comments.js';
+import { renderThumbnails } from './gallery.js';
+import { photoData } from './photo-data.js';
 
-// Основной код приложения
-// Здесь можно добавить инициализацию и использование функций из модулей
-
-// Пример использования:
-const comments = generateComments(5);
-// В реальном приложении здесь будет код для отображения комментариев
-comments.forEach(() => {
-  // Обработка комментариев
-});
+// Отображение фотографий других пользователей
+renderThumbnails(photoData);
