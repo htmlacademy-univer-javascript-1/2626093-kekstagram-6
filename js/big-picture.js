@@ -10,6 +10,11 @@ const cancelButton = bigPictureElement.querySelector('.big-picture__cancel');
 const commentCountElement = bigPictureElement.querySelector('.social__comment-count');
 const commentsLoaderElement = bigPictureElement.querySelector('.comments-loader');
 const commentsContainer = bigPictureElement.querySelector('.social__comments');
+const bigPictureImg = bigPictureElement.querySelector('.big-picture__img img');
+const likesCount = bigPictureElement.querySelector('.likes-count');
+const commentsCount = bigPictureElement.querySelector('.comments-count');
+const socialCaption = bigPictureElement.querySelector('.social__caption');
+const socialLikes = bigPictureElement.querySelector('.social__likes');
 
 // Количество комментариев, отображаемых за один раз
 const COMMENTS_PER_PORTION = 5;
@@ -17,6 +22,7 @@ const COMMENTS_PER_PORTION = 5;
 // Храним текущие данные для работы с комментариями
 let currentComments = [];
 let displayedComments = 0;
+let currentPhoto = null;
 
 /**
  * Создает DOM-элемент комментария
@@ -79,35 +85,27 @@ function renderCommentsPortion(initial = false) {
 
 /**
  * Обработчик клика по кнопке лайка
- * @param {Object} photo - объект с данными фотографии
  */
-function onLikeClick(photo) {
-  // Находим элементы, связанные с лайками
-  const socialLikesElement = bigPictureElement.querySelector('.social__likes');
-  const likesCountElement = bigPictureElement.querySelector('.likes-count');
+function onLikeClick() {
+  if (!currentPhoto) {
+    return;
+  }
 
   // Переключаем состояние лайка и сохраняем в хранилище
-  const isLiked = togglePhotoLike(photo.id);
+  const isLiked = togglePhotoLike(currentPhoto.id);
 
   // Обновляем отображение состояния лайка
-  socialLikesElement.classList.toggle('social__likes--active', isLiked);
+  socialLikes.classList.toggle('social__likes--active', isLiked);
 
   // Увеличиваем или уменьшаем количество лайков в зависимости от состояния
   if (isLiked) {
-    photo.likes += 1;
+    currentPhoto.likes += 1;
   } else {
-    photo.likes -= 1;
+    currentPhoto.likes -= 1;
   }
 
   // Обновляем отображение количества лайков
-  likesCountElement.textContent = photo.likes;
-}
-
-/**
- * Обработчик клика по кнопке "Загрузить еще"
- */
-function onCommentsLoaderClick() {
-  renderCommentsPortion();
+  likesCount.textContent = currentPhoto.likes;
 }
 
 /**
@@ -115,42 +113,26 @@ function onCommentsLoaderClick() {
  * @param {Object} photo - объект с данными фотографии
  */
 function showBigPicture(photo) {
-  bigPictureElement.querySelector('.big-picture__img img').src = photo.url;
-  bigPictureElement.querySelector('.likes-count').textContent = photo.likes;
-  bigPictureElement.querySelector('.comments-count').textContent = photo.comments.length;
-  bigPictureElement.querySelector('.social__caption').textContent = photo.description;
+  currentPhoto = photo;
+  
+  // Заполняем данные фотографии
+  bigPictureImg.src = photo.url;
+  likesCount.textContent = photo.likes;
+  commentsCount.textContent = photo.comments.length;
+  socialCaption.textContent = photo.description;
 
   // Сохраняем комментарии для пошаговой загрузки
   currentComments = photo.comments.slice();
-
+  
   // Показываем первую порцию комментариев
   renderCommentsPortion(true);
 
-  // Показываем блоки счётчика комментариев и загрузки новых комментариев
+  // Показываем блоки счётчика комментариев
   commentCountElement.classList.remove('hidden');
-
-  // Кнопка загрузки может быть скрыта, если комментариев меньше, чем COMMENTS_PER_PORTION
-  // Это обрабатывается в renderCommentsPortion
-
-  // Настройка функциональности лайков
-  const likesContainer = bigPictureElement.querySelector('.social__likes');
-
-  // Очищаем предыдущие обработчики через клонирование
-  const newLikesContainer = likesContainer.cloneNode(true);
-  likesContainer.parentNode.replaceChild(newLikesContainer, likesContainer);
-
+  
   // Устанавливаем состояние лайка из хранилища
   const isLiked = isPhotoLiked(photo.id);
-  newLikesContainer.classList.toggle('social__likes--active', isLiked);
-
-  // Добавляем обработчик клика для лайка с предотвращением всплытия события
-  newLikesContainer.addEventListener('click', (evt) => {
-    evt.stopPropagation();
-    onLikeClick(photo);
-  });
-
-  // Добавляем обработчик клика на кнопку "Загрузить еще"
-  commentsLoaderElement.addEventListener('click', onCommentsLoaderClick);
+  socialLikes.classList.toggle('social__likes--active', isLiked);
 
   // Отображаем окно с полноразмерным изображением
   bigPictureElement.classList.remove('hidden');
@@ -158,7 +140,6 @@ function showBigPicture(photo) {
 
   // Добавляем обработчики событий
   document.addEventListener('keydown', onEscKeyDown);
-  cancelButton.addEventListener('click', closeBigPicture);
 }
 
 /**
@@ -170,10 +151,9 @@ function closeBigPicture() {
 
   // Удаляем обработчики событий
   document.removeEventListener('keydown', onEscKeyDown);
-  cancelButton.removeEventListener('click', closeBigPicture);
-  commentsLoaderElement.removeEventListener('click', onCommentsLoaderClick);
 
-  // Сбрасываем данные о комментариях
+  // Сбрасываем данные
+  currentPhoto = null;
   currentComments = [];
   displayedComments = 0;
 }
@@ -187,5 +167,10 @@ function onEscKeyDown(evt) {
     closeBigPicture();
   }
 }
+
+// Инициализируем обработчики событий, которые не зависят от конкретной фотографии
+cancelButton.addEventListener('click', closeBigPicture);
+commentsLoaderElement.addEventListener('click', () => renderCommentsPortion());
+socialLikes.addEventListener('click', onLikeClick);
 
 export { showBigPicture };
