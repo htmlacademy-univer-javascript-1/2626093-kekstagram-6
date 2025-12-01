@@ -1,0 +1,44 @@
+.img-upload__field-wrapper {
+  position: relative;
+  margin-bottom: 35px; /* Увеличиваем отступ для большей видимости сообщений об ошибках */
+}
+
+.img-upload__error {
+  position: absolute;
+  bottom: -25px; /* Размещаем ошибку ниже поля */
+  left: 0;
+  right: 0; /* Растягиваем по ширине поля */
+  font-size: 12px;
+  font-weight: bold;
+  color: #ff4e4e;
+  background-color: rgba(0, 0, 0, 0.8); /* Темный полупрозрачный фон для лучшей читаемости */
+  padding: 5px 8px;
+  border-radius: 3px;
+  z-index: 100; /* Высокий z-index для отображения поверх всех элементов */
+  text-align: center;
+  text-transform: uppercase;
+}
+
+/* Дополнительные стили для формы */
+.text__hashtags {
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+.text__description {
+  width: 100%;
+  min-height: 100px;
+  resize: vertical; /* Позволяет изменять размер только по вертикали */
+}
+
+/* Отступ между полями формы */
+.img-upload__text {
+  padding-bottom: 20px;
+}
+
+/* Стили для фокуса на полях с ошибками */
+.text__hashtags:focus,
+.text__description:focus {
+  outline: none;
+  border-color: #ff4e4e;
+}
