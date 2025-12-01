@@ -22,3 +22,12 @@ export function generateUniqueIds(count, min, max) {
   }
   return Array.from(ids);
 }
+
+/**
+ * Проверяет, является ли нажатая клавиша Escape
+ * @param {KeyboardEvent} evt - объект события
+ * @returns {boolean} true, если нажата клавиша Escape
+ */
+export function isEscapeKey(evt) {
+  return evt.key === 'Escape';
+}
