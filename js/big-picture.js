@@ -114,7 +114,7 @@ function onLikeClick() {
  */
 function showBigPicture(photo) {
   currentPhoto = photo;
-  
+
   // Заполняем данные фотографии
   bigPictureImg.src = photo.url;
   likesCount.textContent = photo.likes;
@@ -123,13 +123,13 @@ function showBigPicture(photo) {
 
   // Сохраняем комментарии для пошаговой загрузки
   currentComments = photo.comments.slice();
-  
+
   // Показываем первую порцию комментариев
   renderCommentsPortion(true);
 
   // Показываем блоки счётчика комментариев
   commentCountElement.classList.remove('hidden');
-  
+
   // Устанавливаем состояние лайка из хранилища
   const isLiked = isPhotoLiked(photo.id);
   socialLikes.classList.toggle('social__likes--active', isLiked);
