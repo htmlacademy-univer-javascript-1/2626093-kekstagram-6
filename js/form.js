@@ -7,12 +7,15 @@ import { showSuccessMessage, showErrorMessage } from './messages.js';
 const MAX_HASHTAGS_COUNT = 5;
 const MAX_COMMENT_LENGTH = 140;
 const VALID_HASHTAG_REGEX = /^#[a-zа-яё0-9]{1,19}$/i;
+const FILE_TYPES = ['jpg', 'jpeg', 'png'];
 
 const formElement = document.querySelector('.img-upload__form');
 const imageUploadOverlay = document.querySelector('.img-upload__overlay');
 const fileField = document.querySelector('#upload-file');
 const cancelButton = document.querySelector('#upload-cancel');
 const body = document.body;
+const photoPreview = document.querySelector('.img-upload__preview img');
+const effectsPreviews = document.querySelectorAll('.effects__preview');
 
 let hashtagsField = null;
 let commentField = null;
@@ -129,6 +132,21 @@ function openImageUploadOverlay() {
   cancelButton.addEventListener('click', closeImageUploadOverlay);
 }
 
+const onFileFieldChange = () => {
+  const file = fileField.files[0];
+  const fileName = file.name.toLowerCase();
+
+  const matches = FILE_TYPES.some((it) => fileName.endsWith(it));
+
+  if (matches) {
+    photoPreview.src = URL.createObjectURL(file);
+    effectsPreviews.forEach((preview) => {
+      preview.style.backgroundImage = `url(${photoPreview.src})`;
+    });
+    openImageUploadOverlay();
+  }
+};
+
 function initFormValidation() {
   if (!formElement || !hashtagsField || !commentField) {
     return;
@@ -234,7 +252,7 @@ function initImageUploadForm() {
 
   setupAccessibility();
 
-  fileField.addEventListener('change', openImageUploadOverlay);
+  fileField.addEventListener('change', onFileFieldChange);
 
   hashtagsField.addEventListener('keydown', onFieldKeydown);
   commentField.addEventListener('keydown', onFieldKeydown);
