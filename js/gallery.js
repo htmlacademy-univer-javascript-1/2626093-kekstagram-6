@@ -41,6 +41,9 @@ function createThumbnail(photo) {
  * @param {Array} photos - массив с данными фотографий
  */
 function renderThumbnails(photos) {
+  const pictures = picturesContainer.querySelectorAll('.picture');
+  pictures.forEach((picture) => picture.remove());
+
   const fragment = document.createDocumentFragment();
 
   photos.forEach((photo) => {
