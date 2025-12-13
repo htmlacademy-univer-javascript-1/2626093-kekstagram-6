@@ -1,6 +1,7 @@
 import { initImageUploadForm } from './form.js';
 import { renderThumbnails } from './gallery.js';
-import { photoData } from './photo-data.js';
+import { getData } from './api.js';
+import { showAlert } from './utils.js';
 
 /**
  * Функция для проверки загрузки зависимостей и инициализации приложения
@@ -15,8 +16,15 @@ function initializeApp() {
 
   // Библиотеки загружены, можно инициализировать приложение
 
-  // Отображаем миниатюры фотографий пользователей (не зависит от Pristine)
-  renderThumbnails(photoData);
+  // Загружаем данные с сервера
+  getData(
+    (photos) => {
+      renderThumbnails(photos);
+    },
+    () => {
+      showAlert('Не удалось загрузить данные. Попробуйте обновить страницу');
+    }
+  );
 
   // Инициализируем форму загрузки изображения (зависит от Pristine)
   initImageUploadForm();
