@@ -12,7 +12,6 @@ const commentsLoaderElement = bigPictureElement.querySelector('.comments-loader'
 const commentsContainer = bigPictureElement.querySelector('.social__comments');
 const bigPictureImg = bigPictureElement.querySelector('.big-picture__img img');
 const likesCount = bigPictureElement.querySelector('.likes-count');
-const commentsCount = bigPictureElement.querySelector('.comments-count');
 const socialCaption = bigPictureElement.querySelector('.social__caption');
 const socialLikes = bigPictureElement.querySelector('.social__likes');
 
@@ -73,7 +72,7 @@ function renderCommentsPortion(initial = false) {
   displayedComments = commentsToShow;
 
   // Обновляем счетчик комментариев
-  commentCountElement.textContent = `${displayedComments} из ${currentComments.length} комментариев`;
+  commentCountElement.innerHTML = `<span class="social__comment-shown-count">${displayedComments}</span> из <span class="social__comment-total-count">${currentComments.length}</span> комментариев`;
 
   // Скрываем кнопку загрузки, если все комментарии загружены
   if (displayedComments >= currentComments.length) {
@@ -118,7 +117,6 @@ function showBigPicture(photo) {
   // Заполняем данные фотографии
   bigPictureImg.src = photo.url;
   likesCount.textContent = photo.likes;
-  commentsCount.textContent = photo.comments.length;
   socialCaption.textContent = photo.description;
 
   // Сохраняем комментарии для пошаговой загрузки

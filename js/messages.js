@@ -18,6 +18,7 @@ const showMessage = (template, buttonClass) => {
   function onMessageEscKeydown(evt) {
     if (isEscapeKey(evt)) {
       evt.preventDefault();
+      evt.stopPropagation();
       closeMessage();
     }
   }

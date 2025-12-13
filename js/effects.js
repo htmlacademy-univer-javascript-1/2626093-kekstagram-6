@@ -85,15 +85,6 @@ const updateSlider = () => {
   }
 };
 
-const onEffectsChange = (evt) => {
-  if (!evt.target.classList.contains('effects__radio')) {
-    return;
-  }
-  chosenEffect = EFFECTS.find((effect) => effect.name === evt.target.value);
-  imageElement.className = `effects__preview--${chosenEffect.name}`;
-  updateSlider();
-};
-
 const onSliderUpdate = () => {
   const sliderValue = sliderElement.noUiSlider.get();
   if (isDefault()) {
@@ -101,7 +92,17 @@ const onSliderUpdate = () => {
   } else {
     imageElement.style.filter = `${chosenEffect.style}(${sliderValue}${chosenEffect.unit})`;
   }
-  effectLevelElement.value = sliderValue;
+  effectLevelElement.value = parseFloat(sliderValue);
+};
+
+const onEffectsChange = (evt) => {
+  if (!evt.target.classList.contains('effects__radio')) {
+    return;
+  }
+  chosenEffect = EFFECTS.find((effect) => effect.name === evt.target.value);
+  imageElement.className = `effects__preview--${chosenEffect.name}`;
+  updateSlider();
+  onSliderUpdate();
 };
 
 const resetEffects = () => {

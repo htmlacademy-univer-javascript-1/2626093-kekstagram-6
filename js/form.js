@@ -70,8 +70,6 @@ const validateHashtagsUnique = (value) => {
 
 const validateComment = (value) => !value || value.length <= MAX_COMMENT_LENGTH;
 
-const validateRequired = (value) => !!value.trim();
-
 const onFieldKeydown = (evt) => {
   if (isEscapeKey(evt)) {
     evt.stopPropagation();
@@ -166,13 +164,7 @@ function initFormValidation() {
     errorTextParent: 'img-upload__field-wrapper',
     errorTextTag: 'div',
     errorTextClass: 'img-upload__error'
-  }, true);
-
-  pristine.addValidator(
-    hashtagsField,
-    validateRequired,
-    'Поле хэш-тегов обязательно для заполнения'
-  );
+  });
 
   pristine.addValidator(
     hashtagsField,
@@ -196,12 +188,6 @@ function initFormValidation() {
     hashtagsField,
     validateNonEmptyHashtag,
     'Хэш-тег не может состоять только из символа #'
-  );
-
-  pristine.addValidator(
-    commentField,
-    validateRequired,
-    'Поле комментария обязательно для заполнения'
   );
 
   pristine.addValidator(
