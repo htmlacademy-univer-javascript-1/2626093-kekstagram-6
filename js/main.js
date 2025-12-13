@@ -9,7 +9,8 @@ import { initFilters } from './filters.js';
  */
 function initializeApp() {
   // Проверяем, загрузились ли библиотеки
-  if (!window.kekstagramApp || !window.kekstagramApp.librariesLoaded || typeof window.Pristine !== 'function') {
+  // Если Pristine загрузился, то считаем что все ок
+  if (typeof window.Pristine !== 'function') {
     // Если библиотеки не загружены, пробуем через 100мс
     setTimeout(initializeApp, 100);
     return;
@@ -32,7 +33,11 @@ function initializeApp() {
   initImageUploadForm();
 }
 
-// Запускаем инициализацию приложения когда DOM будет загружен
-document.addEventListener('DOMContentLoaded', () => {
-  initializeApp();
-});
+// Запускаем инициализацию приложения
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initializeApp, 0);
+  });
+} else {
+  setTimeout(initializeApp, 0);
+}
