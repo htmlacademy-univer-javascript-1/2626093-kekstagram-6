@@ -9,25 +9,25 @@ const showMessage = (template, buttonClass) => {
 
   document.body.append(messageElement);
 
+  const onMessageEscKeydown = (evt) => {
+    if (isEscapeKey(evt)) {
+      evt.preventDefault();
+      evt.stopPropagation();
+      button.click();
+    }
+  };
+
+  const onOutsideClick = (evt) => {
+    if (evt.target === messageElement) {
+      button.click();
+    }
+  };
+
   const closeMessage = () => {
     messageElement.remove();
     document.removeEventListener('keydown', onMessageEscKeydown);
     document.removeEventListener('click', onOutsideClick);
   };
-
-  function onMessageEscKeydown(evt) {
-    if (isEscapeKey(evt)) {
-      evt.preventDefault();
-      evt.stopPropagation();
-      closeMessage();
-    }
-  }
-
-  function onOutsideClick(evt) {
-    if (evt.target === messageElement) {
-      closeMessage();
-    }
-  }
 
   button.addEventListener('click', closeMessage);
   document.addEventListener('keydown', onMessageEscKeydown);
