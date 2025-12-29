@@ -4,21 +4,13 @@ import { getData } from './api.js';
 import { showAlert } from './utils.js';
 import { initFilters } from './filters.js';
 
-/**
- * Функция для проверки загрузки зависимостей и инициализации приложения
- */
-function initializeApp() {
-  // Проверяем, загрузились ли библиотеки
-  // Если Pristine загрузился, то считаем что все ок
+const initializeApp = () => {
   if (typeof window.Pristine !== 'function') {
-    // Если библиотеки не загружены, пробуем через 100мс
     setTimeout(initializeApp, 100);
     return;
   }
 
-  // Библиотеки загружены, можно инициализировать приложение
 
-  // Загружаем данные с сервера
   getData(
     (photos) => {
       renderThumbnails(photos);
@@ -29,11 +21,9 @@ function initializeApp() {
     }
   );
 
-  // Инициализируем форму загрузки изображения (зависит от Pristine)
   initImageUploadForm();
-}
+};
 
-// Запускаем инициализацию приложения
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(initializeApp, 0);

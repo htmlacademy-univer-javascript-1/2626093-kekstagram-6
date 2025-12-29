@@ -23,7 +23,7 @@ let submitButton = null;
 
 let pristine = null;
 
-function findFormElements() {
+const findFormElements = () => {
   if (!formElement) {
     return false;
   }
@@ -33,7 +33,7 @@ function findFormElements() {
   submitButton = formElement.querySelector('.img-upload__submit');
 
   return hashtagsField && commentField && submitButton;
-}
+};
 
 const validateHashtagsCount = (value) => {
   if (!value) {
@@ -90,7 +90,22 @@ const unblockSubmitButton = () => {
   }
 };
 
-function closeImageUploadOverlay() {
+const onFormEscKeydown = (evt) => {
+  if (document.activeElement === hashtagsField || document.activeElement === commentField) {
+    return;
+  }
+
+  if (document.querySelector('.error')) {
+    return;
+  }
+
+  if (isEscapeKey(evt)) {
+    evt.preventDefault();
+    cancelButton.click();
+  }
+};
+
+const closeImageUploadOverlay = () => {
   formElement.reset();
   if (pristine) {
     pristine.reset();
@@ -102,24 +117,9 @@ function closeImageUploadOverlay() {
 
   document.removeEventListener('keydown', onFormEscKeydown);
   cancelButton.removeEventListener('click', closeImageUploadOverlay);
-}
+};
 
-function onFormEscKeydown(evt) {
-  if (document.activeElement === hashtagsField || document.activeElement === commentField) {
-    return;
-  }
-
-  if (document.querySelector('.error')) {
-    return;
-  }
-
-  if (isEscapeKey(evt)) {
-    evt.preventDefault();
-    closeImageUploadOverlay();
-  }
-}
-
-function openImageUploadOverlay() {
+const openImageUploadOverlay = () => {
   if (!imageUploadOverlay || !cancelButton) {
     return;
   }
@@ -128,7 +128,7 @@ function openImageUploadOverlay() {
   body.classList.add('modal-open');
   document.addEventListener('keydown', onFormEscKeydown);
   cancelButton.addEventListener('click', closeImageUploadOverlay);
-}
+};
 
 const onFileFieldChange = () => {
   const file = fileField.files[0];
@@ -145,7 +145,7 @@ const onFileFieldChange = () => {
   }
 };
 
-function initFormValidation() {
+const initFormValidation = () => {
   if (!formElement || !hashtagsField || !commentField) {
     return;
   }
@@ -154,7 +154,6 @@ function initFormValidation() {
     return;
   }
 
-  // Destroy existing pristine instance if any
   if (pristine) {
     pristine.destroy();
   }
@@ -217,17 +216,17 @@ function initFormValidation() {
       );
     }
   });
-}
+};
 
-function setupAccessibility() {
+const setupAccessibility = () => {
   if (!hashtagsField || !commentField) {
     return;
   }
   hashtagsField.setAttribute('aria-describedby', 'hashtags-error');
   commentField.setAttribute('aria-describedby', 'comment-error');
-}
+};
 
-function initImageUploadForm() {
+const initImageUploadForm = () => {
   if (!formElement || !fileField) {
     return;
   }
@@ -246,6 +245,6 @@ function initImageUploadForm() {
   initScale();
   initEffects();
   initFormValidation();
-}
+};
 
 export { initImageUploadForm };
